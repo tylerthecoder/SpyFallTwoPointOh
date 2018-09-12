@@ -1,0 +1,37 @@
+<html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+    const url = new URL(location.href);
+    const name = url.searchParams.get('name');
+    socket.on('all players', (players) => {
+      document.getElementById('listOfPlayers').innerHTML = players.reduce((str, player) => {
+        return str + "<p>" + player + "</p>";
+      },"");
+    })
+
+    socket.on('gameData', (data) => {
+      console.log(data);
+
+    })
+
+    const start = () => {
+      socket.emit('startGame');
+    }
+
+    const leave = () => {
+      socket.emit('kick', name);
+      location.assign('/')
+    }
+
+  </script>
+</head>
+<body>
+  <div id='listOfPlayers'>
+    <p> Tyler </p>
+  </div>
+  <button onclick="start()"> Start </button>
+  <button onclick="leave()"> Leave </button>
+</body>
+</html>
