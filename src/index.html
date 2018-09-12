@@ -7,14 +7,19 @@
     const name = url.searchParams.get('name');
     socket.on('all players', (players) => {
       document.getElementById('listOfPlayers').innerHTML = players.reduce((str, player) => {
-        return str + "<p>" + player + "</p>";
+        return `${str}<p>${player} <button onclick="kick('${player}')"> Kick </button></p>`;
       },"");
     })
 
     socket.on('gameData', (data) => {
-      console.log(data);
-
+      const iAmSpy = name === data.theSpy;
+      document.getElementById('theLocation').innerHTML = iAmSpy ? "unknown" : data.location;
+      document.getElementById('theSpy').innerHTML = `You ${iAmSpy ? 'ARE' : 'are NOT'} the spy`;
     })
+
+    const kick = (player) => {
+      socket.emit('kick', player);
+    }
 
     const start = () => {
       socket.emit('startGame');
@@ -33,5 +38,7 @@
   </div>
   <button onclick="start()"> Start </button>
   <button onclick="leave()"> Leave </button>
+  <p id="theLocation"></p>
+  <p id="theSpy"></p>
 </body>
 </html>
